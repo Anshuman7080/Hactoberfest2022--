@@ -1,63 +1,73 @@
 #include <iostream>
 using namespace std;
 
-class Node{
-	public:
-		int data;
-		Node *next;
-};
-
-class NodeOperation{
+class Node {
 public:
-
-	// Function to add a new node
-	void pushNode(class Node** head_ref,int data_val){
-	
-		// Allocate node
-		class Node *new_node = new Node();
-		
-		// Put in the data
-		new_node->data = data_val;
-		
-		// Link the old list off the new node
-		new_node->next = *head_ref;
-		
-		// move the head to point to the new node
-		*head_ref = new_node;
-	}
-	
-	// A utility function to print a given linked list
-	void printNode(class Node *head){
-		while(head != NULL){
-			cout <<head->data << "->";
-			head = head->next;
-		}
-		cout << "NULL" << endl;
-	}
-	
-	void printMiddle(class Node *head){
-		struct Node *slow_ptr = head;
-		struct Node *fast_ptr = head;
-
-		if (head!=NULL)
-		{
-			while (fast_ptr != NULL && fast_ptr->next != NULL)
-			{
-				fast_ptr = fast_ptr->next->next;
-				slow_ptr = slow_ptr->next;
-			}
-			cout << "The middle element is [" << slow_ptr->data << "]" << endl;
-		}
-	}
+    int data;
+    Node* next;
+    
+    Node(int data_val) : data(data_val), next(nullptr) {}
 };
 
-int main(){
-	class Node *head = NULL;
-	class NodeOperation *temp = new NodeOperation();
-	for(int i=5; i>0; i--){
-		temp->pushNode(&head, i);
-		temp->printNode(head);
-		temp->printMiddle(head);
-	}
-	return 0;
+class LinkedList {
+public:
+    Node* head;
+    Node* middle;
+    int count;
+
+    LinkedList() : head(nullptr), middle(nullptr), count(0) {}
+
+    // Function to add a new node
+    void pushNode(int data_val) {
+        Node* new_node = new Node(data_val);
+        
+        // Update head
+        new_node->next = head;
+        head = new_node;
+
+        // Update the middle pointer and count
+        count++;
+        if (count == 1) {
+            middle = new_node;  // First node is the middle
+        } else if (count % 2 == 0) {
+            middle = middle->next;  // Move the middle pointer forward
+        }
+    }
+
+    // Utility function to print the linked list
+    void printNode() {
+        Node* current = head;
+        while (current) {
+            cout << current->data << "->";
+            current = current->next;
+        }
+        cout << "NULL" << endl;
+    }
+
+    // Function to print the middle element of the linked list
+    void printMiddle() {
+        if (middle) {
+            cout << "The middle element is [" << middle->data << "]" << endl;
+        }
+    }
+
+    ~LinkedList() {
+        while (head) {
+            Node* temp = head;
+            head = head->next;
+            delete temp;
+        }
+    }
+};
+
+int main() {
+    LinkedList linkedList;
+
+    for (int i = 5; i > 0; --i) {
+        linkedList.pushNode(i);
+        linkedList.printNode();
+        linkedList.printMiddle();
+    }
+
+    return 0;
 }
